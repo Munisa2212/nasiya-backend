@@ -1,0 +1,18 @@
+import { Module } from '@nestjs/common';
+import { SellerService } from './seller.service';
+import { SellerController } from './seller.controller';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { JwtModule } from '@nestjs/jwt';
+
+@Module({
+  imports: [
+        PrismaModule,
+        JwtModule.register({
+          secret: 'yourSecret',
+          signOptions: { expiresIn: '1h' },
+        }),
+  ],
+  controllers: [SellerController],
+  providers: [SellerService],
+})
+export class SellerModule {}

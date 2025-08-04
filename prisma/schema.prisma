@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin{
+  id Int @id @default(autoincrement())
+  login String
+  password String
+}
+
+model Seller{
+  id Int @id @default(autoincrement())
+  login String
+  password String
+  name String
+  balance Int
+
+  debters Debtor[]
+}
+
+model Debtor{
+  id Int @id @default(autoincrement())
+  name String
+  note String?
+  address String
+
+  seller_id  Int 
+  seller    Seller    @relation(fields: [seller_id], references: [id])
+
+  credits Credits[]
+  debtor_image debtor_image[]
+  debtor_phone debtor_phone[]
+}
+
+model debtor_image{
+  id Int @id @default(autoincrement())
+  image String
+
+  debtor_id  Int
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+}
+
+model debtor_phone{
+  id Int @id @default(autoincrement())
+  phone String
+
+  debtor_id  Int
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+}
+
+model Credits{
+  id Int @id @default(autoincrement())
+  start_date DateTime
+  duration Int
+  total_amount Int
+  remaining_amount Int
+  monthly_payment_amount Int
+  status Credit_status
+  product_name String
+  note String?
+
+  debtor_id  Int 
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+
+  payments Payment[]
+  credit_image Credit_image[]
+  payment_schedule Payment_schedule[]
+}
+
+model Credit_image{
+  id Int @id @default(autoincrement())
+  image String
+
+  credit_id  Int
+  credit    Credits    @relation(fields: [credit_id], references: [id])
+}
+
+model Payment{
+  id Int @id @default(autoincrement())
+  amount Int
+  payment_date DateTime
+
+  credit_id  Int 
+  credit    Credits    @relation(fields: [credit_id], references: [id])
+}
+
+model Payment_schedule{
+  id Int @id @default(autoincrement())
+  due_date DateTime
+  expected_amount Int
+  paid_amount Int
+  status Schedule_status @default(PENDING)
+
+  credit_id  Int 
+  credit    Credits    @relation(fields: [credit_id], references: [id])
+
+  @@unique([credit_id, due_date])
+}
+
+model Notification{
+  id Int @id @default(autoincrement())
+  client_id Int
+  phone String
+  message String
+  sent_at DateTime
+  status Payment_status
+}
+
+enum Credit_status {
+  ACTIVE
+  COMPLETED
+  OVERDUE
+}
+
+enum Schedule_status {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum Payment_status {
+  SENT
+  FAILED
+}
