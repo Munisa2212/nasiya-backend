@@ -3,6 +3,7 @@ import { Add_debtor } from './dto/create-debter.dto';
 import { UpdateDebterDto } from './dto/update-debter.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import { rolesEnum } from 'src/enum/role.enum';
 
 @Injectable()
 export class DebterService {
@@ -66,15 +67,29 @@ export class DebterService {
     }
   }
 
-  async findAll() {
+  async findAll(req: Request) {
     try {
-      const data = await this.prisma.debtor.findMany({include: {
-        debtor_image: true,
-        debtor_phone: true,
-        credits: {omit: {debtor_id: true, id: true}}
-      }});
-
-      return data
+      let seller_id = req["user-id"]
+      let role = req["user-role"]
+      if(role === rolesEnum.SELLER){
+        const data = await this.prisma.debtor.findMany({
+          where: {
+            seller_id
+          },
+          include: {
+          debtor_image: true,
+          debtor_phone: true,
+          credits: {omit: {debtor_id: true, id: true}}
+        }});
+        return data
+      }else if(role === rolesEnum.ADMIN){
+        const data = await this.prisma.debtor.findMany({include: {
+          debtor_image: true,
+          debtor_phone: true,
+          credits: {omit: {debtor_id: true, id: true}}
+        }});
+        return data
+      }
     } catch (error) {
       throw new BadRequestException(error.message);
     }

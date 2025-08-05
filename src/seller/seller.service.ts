@@ -53,6 +53,19 @@ export class SellerService {
     }
   }
 
+  async me(req: Request) {
+    try {
+      const id = req["user-id"]
+      const data = await this.prisma.seller.findUnique({where: {id}, include: {debters: true}});
+      if(!data){
+        throw new BadRequestException('Seller not found');
+      }
+      return data
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   async myDebtors(req: Request){
     try {
       const id = req["user-id"]

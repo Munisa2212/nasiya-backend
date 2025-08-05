@@ -51,6 +51,21 @@ export class AdminService {
     }
   }
 
+  async me(req: Request) {
+    try {
+      const id = req["user-id"]
+      const data = await this.prisma.admin.findUnique({
+        where: {id}
+      });
+      if(!data){
+        throw new BadRequestException('Admin not found');
+      }
+      return data
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
   async findAll() {
     try {
       const data = await this.prisma.admin.findMany();

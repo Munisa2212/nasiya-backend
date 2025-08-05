@@ -26,6 +26,12 @@ export class SellerController {
   }
 
   @UseGuards(AuthGuard)
+  @Get("me")
+  me(@Req() req: Request) {
+    return this.sellerService.me(req);
+  }
+
+  @UseGuards(AuthGuard)
   @Get("myDebtors")
   myDebtors(@Req() req: Request) {
     return this.sellerService.myDebtors(req);

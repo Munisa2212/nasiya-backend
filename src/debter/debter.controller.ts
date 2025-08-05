@@ -20,15 +20,21 @@ export class DebterController {
     return this.debterService.create(Add_debtor, req);
   }
 
+
+  @UseGuards(AuthGuard)
   @Get("credit/:id")
   debtor_credit(@Param('id') id: string) {
     return this.debterService.debtor_credit(+id);
   }
 
+  @Roles(rolesEnum.ADMIN)
+  @UseGuards(RbucGuard)
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.debterService.findAll();
+  findAll(@Req() req: Request) {
+    return this.debterService.findAll(req);
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
