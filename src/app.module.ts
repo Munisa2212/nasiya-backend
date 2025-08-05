@@ -8,9 +8,14 @@ import { DebterModule } from './debter/debter.module';
 import { CreditModule } from './credit/credit.module';
 import { PaymentModule } from './payment/payment.module';
 import { NotificationModule } from './notification/notification.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [AdminModule, PrismaModule, SellerModule, DebterModule, CreditModule, PaymentModule, NotificationModule ],
+  imports: [AdminModule, PrismaModule, SellerModule, DebterModule, CreditModule, PaymentModule, NotificationModule, ServeStaticModule.forRoot({
+    rootPath: join(__dirname, '..', 'uploads'),
+    serveRoot: '/file',
+  }) ],
   controllers: [AppController],
   providers: [AppService],
 })
