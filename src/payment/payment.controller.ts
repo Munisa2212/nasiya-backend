@@ -13,6 +13,11 @@ export class PaymentController {
     return this.paymentService.create(createPaymentDto);
   }
 
+  @Get("payment_day/:date")
+  payment_day(@Param("date") date: string) {
+    return this.paymentService.payment_day(date);
+  }
+
   @Get('debtor/:id')
   findOne(@Param('id') id: string) {
     return this.paymentService.findOne(+id);

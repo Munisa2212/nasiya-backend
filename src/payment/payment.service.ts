@@ -127,6 +127,15 @@ export class PaymentService {
   }
 }
 
+  async payment_day(date: string) {
+    try {
+      const data = await this.prisma.payment_schedule.findMany({where: {due_date: new Date(date)}, include: {credit: true}});
+      return data
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
 
   async findOne(id: number) {
     try {
