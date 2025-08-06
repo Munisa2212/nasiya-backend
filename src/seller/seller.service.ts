@@ -60,7 +60,22 @@ export class SellerService {
       if(!data){
         throw new BadRequestException('Seller not found');
       }
-      return data
+      const debtors_id = await this.prisma.debtor.findMany({where: {seller_id: id}, select: {id: true}});
+      const total_debt = await this.prisma.credits.aggregate({
+        _sum: {
+          remaining_amount: true
+        },
+        where: {
+          debtor_id: {
+            in: debtors_id.map((debtor) => debtor.id)
+          }
+        }
+      })
+
+
+
+      return {data, total_debt: total_debt._sum.remaining_amount || 0, debtors_count: debtors_id.length}
+      
     } catch (error) {
       throw new BadRequestException(error.message);
     }
