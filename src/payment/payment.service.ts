@@ -158,10 +158,18 @@ export class PaymentService {
           id: { in: debtorIds },
         },
         select: {
+          id: true,
           name: true,
         }
       });
-      return {month_debt, data, debtor}
+
+      data.forEach((item) => {
+        const debtorName = debtor.find((debtor) => debtor.id === item.credit.debtor_id)?.name;
+        if (debtorName) {
+          item.credit[debtorName] = debtorName;
+        }
+      })
+      return {month_debt, data}
     } catch (error) {
       throw new BadRequestException(error.message);
     }
