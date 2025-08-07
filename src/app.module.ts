@@ -10,13 +10,14 @@ import { PaymentModule } from './payment/payment.module';
 import { NotificationModule } from './notification/notification.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MulterController } from './multer/multer.controller';
 
 @Module({
   imports: [AdminModule, PrismaModule, SellerModule, DebterModule, CreditModule, PaymentModule, NotificationModule, ServeStaticModule.forRoot({
     rootPath: join(__dirname, '..', 'uploads'),
     serveRoot: '/file',
   }) ],
-  controllers: [AppController],
+  controllers: [AppController, MulterController],
   providers: [AppService],
 })
 export class AppModule {}
