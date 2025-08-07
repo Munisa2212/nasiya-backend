@@ -3,6 +3,7 @@ import { CreateCreditDto } from './dto/create-credit.dto';
 import { UpdateCreditDto } from './dto/update-credit.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class CreditService {
@@ -18,16 +19,31 @@ export class CreditService {
         status: "ACTIVE"
       }});
 
-      for(let i=0; i < createCreditDto.duration; i++){
-        const paymentDate = new Date(credit.start_date);
-        paymentDate.setMonth(paymentDate.getMonth() + i);
-        const data = await this.prisma.payment_schedule.create({data: {
-          credit_id: credit.id,
-          due_date: paymentDate,
-          expected_amount: monthly_payment_amount,
-          paid_amount: 0
-        }});
+      for (let i = 0; i < createCreditDto.duration; i++) {
+        const baseDate = new Date(credit.start_date);
+        
+        const year = baseDate.getFullYear();
+        const month = baseDate.getMonth() + i;
+        const day = baseDate.getDate();
+
+        const tentativeDate = new Date(year, month, day);
+
+        if (tentativeDate.getDate() !== day) {
+          tentativeDate.setDate(0);
+        }
+
+        const formatted = tentativeDate.toISOString().split('T')[0];
+
+        await this.prisma.payment_schedule.create({
+          data: {
+            credit_id: credit.id,
+            due_date: new Date(formatted),
+            expected_amount: monthly_payment_amount,
+            paid_amount: 0,
+          },
+        });
       }
+
 
       return credit
     } catch (error) {

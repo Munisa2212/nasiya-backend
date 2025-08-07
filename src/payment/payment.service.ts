@@ -129,8 +129,25 @@ export class PaymentService {
 
   async payment_day(date: string) {
     try {
+      const parsedDate = new Date(date);
+      const year = parsedDate.getUTCFullYear();
+      const month = parsedDate.getUTCMonth();
+      const startDate = new Date(Date.UTC(year, month, 1));
+      const endDate = new Date(Date.UTC(year, month + 1, 1));
+      const month_debt = await this.prisma.payment_schedule.findMany({
+      where: {
+        due_date: {
+          gte: startDate,
+          lt: endDate,
+        },
+        status: "PENDING",
+      },
+      include: {
+        credit: true,
+      },
+    });
       const data = await this.prisma.payment_schedule.findMany({where: {due_date: new Date(date)}, include: {credit: true}});
-      return data
+      return {month_debt, data}
     } catch (error) {
       throw new BadRequestException(error.message);
     }
