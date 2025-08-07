@@ -166,7 +166,7 @@ export class PaymentService {
       data.forEach((item) => {
         const debtorName = debtor.find((debtor) => debtor.id === item.credit.debtor_id)?.name;
         if (debtorName) {
-          item.credit[debtorName] = debtorName;
+          item.credit.product_name = debtorName;
         }
       })
       return {month_debt, data}
