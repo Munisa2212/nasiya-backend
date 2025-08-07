@@ -146,8 +146,22 @@ export class PaymentService {
         credit: true,
       },
     });
-      const data = await this.prisma.payment_schedule.findMany({where: {due_date: new Date(date)}, include: {credit: true}});
-      return {month_debt, data}
+      const data = await this.prisma.payment_schedule.findMany({
+        where: { due_date: new Date(date) },
+        include: { credit: true },
+      });
+
+      const debtorIds = data.map((item) => item.credit.debtor_id);
+
+      const debtor = await this.prisma.debtor.findMany({
+        where: {
+          id: { in: debtorIds },
+        },
+        select: {
+          name: true,
+        }
+      });
+      return {month_debt, data, debtor}
     } catch (error) {
       throw new BadRequestException(error.message);
     }
