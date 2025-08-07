@@ -11,6 +11,13 @@ export class CreditService {
   constructor(readonly prisma: PrismaService) {}
   async create(createCreditDto: CreateCreditDto) {
     try {
+      const debtor = await this.prisma.debtor.findUnique({
+        where: { id: createCreditDto.debtor_id },
+      });
+
+      if (!debtor) {
+        throw new BadRequestException('Debtor not found');
+      }
       const monthly_payment_amount = createCreditDto.total_amount / createCreditDto.duration;
       const credit = await this.prisma.credits.create({data: {
         ...createCreditDto,

@@ -36,7 +36,7 @@ model Debtor{
   address String
 
   seller_id  Int 
-  seller    Seller    @relation(fields: [seller_id], references: [id])
+  seller    Seller    @relation(fields: [seller_id], references: [id], onDelete: Cascade)
 
   credits Credits[]
   debtor_image debtor_image[]
@@ -48,7 +48,7 @@ model debtor_image{
   image String
 
   debtor_id  Int
-  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id], onDelete: Cascade)
 }
 
 model debtor_phone{
@@ -56,7 +56,7 @@ model debtor_phone{
   phone String
 
   debtor_id  Int
-  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id], onDelete: Cascade)
 }
 
 model Credits{
@@ -71,7 +71,7 @@ model Credits{
   note String?
 
   debtor_id  Int 
-  debtor    Debtor    @relation(fields: [debtor_id], references: [id])
+  debtor    Debtor    @relation(fields: [debtor_id], references: [id], onDelete: Cascade)
 
   payments Payment[]
   credit_image Credit_image[]
@@ -83,7 +83,7 @@ model Credit_image{
   image String
 
   credit_id  Int
-  credit    Credits    @relation(fields: [credit_id], references: [id])
+  credit    Credits    @relation(fields: [credit_id], references: [id], onDelete: Cascade)
 }
 
 model Payment{
@@ -92,7 +92,7 @@ model Payment{
   payment_date DateTime
 
   credit_id  Int 
-  credit    Credits    @relation(fields: [credit_id], references: [id])
+  credit    Credits    @relation(fields: [credit_id], references: [id], onDelete: Cascade)
 }
 
 model Payment_schedule{
@@ -103,7 +103,7 @@ model Payment_schedule{
   status Schedule_status @default(PENDING)
 
   credit_id  Int 
-  credit    Credits    @relation(fields: [credit_id], references: [id])
+  credit    Credits    @relation(fields: [credit_id], references: [id], onDelete: Cascade)
 
   @@unique([credit_id, due_date])
 }

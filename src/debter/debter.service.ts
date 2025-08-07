@@ -81,14 +81,16 @@ export class DebterService {
           debtor_phone: true,
           credits: {omit: {debtor_id: true, id: true}}
         }});
-        return data
+
+        return {data}
       }else if(role === rolesEnum.ADMIN){
         const data = await this.prisma.debtor.findMany({include: {
           debtor_image: true,
           debtor_phone: true,
           credits: {omit: {debtor_id: true, id: true}}
         }});
-        return data
+
+        return {data}
       }
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -126,12 +128,18 @@ export class DebterService {
 
   async remove(id: number) {
     try {
-      const data = await this.prisma.debtor.findFirst({where: {id}});
-      if(!data){
+      const data = await this.prisma.debtor.findFirst({ where: { id } });
+
+      if (!data) {
         throw new BadRequestException('Debtor not found');
       }
-      await this.prisma.debtor.delete({where: {id}});
-      return {message: 'Debtor deleted successfully'}
+
+      await this.prisma.debtor_image.deleteMany({ where: { debtor_id: id } });
+      await this.prisma.debtor_phone.deleteMany({ where: { debtor_id: id } });
+
+      await this.prisma.debtor.delete({ where: { id } });
+
+      return { message: 'Debtor deleted successfully' };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
