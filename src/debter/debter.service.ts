@@ -79,7 +79,7 @@ export class DebterService {
           include: {
           debtor_image: true,
           debtor_phone: true,
-          credits: {omit: {debtor_id: true, id: true}}
+          credits: true
         }});
 
         return {data}
