@@ -102,7 +102,7 @@ export class DebterService {
       const data = await this.prisma.debtor.findUnique({where: {id}, include: {
         debtor_image: true,
         debtor_phone: true,
-        credits: {omit: {debtor_id: true, id: true}}
+        credits: true
       }})
       if(!data){
         throw new BadRequestException('Debtor not found');
