@@ -24,4 +24,7 @@ export class CreateCreditDto {
     @ApiProperty({example: 'Note', description: 'Note'})
     @IsString()
     note?: string
+
+    @ApiProperty({example: ['image1.jpg','image2.jpg'], description: 'Images'})
+    images: string[]
 }

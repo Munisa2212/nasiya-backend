@@ -20,11 +20,25 @@ export class CreditService {
       }
       const monthly_payment_amount = createCreditDto.total_amount / createCreditDto.duration;
       const credit = await this.prisma.credits.create({data: {
-        ...createCreditDto,
+        start_date: createCreditDto.start_date,
+        duration: createCreditDto.duration,
+        total_amount: createCreditDto.total_amount,
+        product_name: createCreditDto.product_name,
+        note: createCreditDto.note,
+        debtor_id: createCreditDto.debtor_id,
         monthly_payment_amount,
         remaining_amount: createCreditDto.total_amount,
         status: "ACTIVE"
       }});
+
+      for(let i = 0; i < createCreditDto.images.length; i++){
+        await this.prisma.credit_image.create({
+          data: {
+            image: createCreditDto.images[i],
+            credit_id: credit.id
+          }
+        })
+      }
 
       for (let i = 0; i < createCreditDto.duration; i++) {
         const baseDate = new Date(credit.start_date);
