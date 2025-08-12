@@ -104,7 +104,8 @@ export class CreditService {
       const data = await this.prisma.credits.findFirst({where: {id}, include: {
         debtor: {
           select: {name: true}
-        }
+        },
+        credit_image: true
       }});
       if(!data){
         throw new BadRequestException('Credit not found');
