@@ -12,6 +12,11 @@ export class NotificationController {
     return this.notificationService.create(createNotificationDto);
   }
 
+  @Get()
+  findAll(){
+    return this.notificationService.findAll()
+  }
+
   @Get('debtor/:id')
   findOneByDebtorId(@Param('id') id: string) {
     return this.notificationService.findOneByDebtorId(+id);

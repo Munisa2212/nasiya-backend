@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { DebterService } from './debter.service';
 import { Add_debtor } from './dto/create-debter.dto';
 import { UpdateDebterDto } from './dto/update-debter.dto';
@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { RbucGuard } from 'src/guards/rbuc.guard';
 import { Roles } from 'src/decorators/rbuc.decorators';
 import { rolesEnum } from 'src/enum/role.enum';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('debtor')
 export class DebterController {
@@ -31,8 +32,10 @@ export class DebterController {
   @UseGuards(RbucGuard)
   @UseGuards(AuthGuard)
   @Get()
-  findAll(@Req() req: Request) {
-    return this.debterService.findAll(req);
+  @ApiQuery({ name: 'name', required: false, type: String })
+  @ApiQuery({ name: "sort", required: false, type: String })
+  findAll(@Req() req: Request, @Query('name') name: string, @Query('sort') sort: "asc" | "desc") {
+    return this.debterService.findAll(req, name, sort);
   }
 
 

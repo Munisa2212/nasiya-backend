@@ -1,7 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { Payment } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { Roles } from 'src/decorators/rbuc.decorators';
+import { rolesEnum } from 'src/enum/role.enum';
+import { RbucGuard } from 'src/guards/rbuc.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { Request } from 'express';
 
 
 @Controller('payment')
@@ -18,9 +23,12 @@ export class PaymentController {
     return this.paymentService.payment_day(date);
   }
 
-  @Get('debtor/:id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
+  @Roles(rolesEnum.ADMIN)
+  @UseGuards(RbucGuard)
+  @UseGuards(AuthGuard)
+  @Get('debtor')
+  findOne( @Req() req: Request) {
+    return this.paymentService.findOne( req);
   }
 
   @Patch(':id')

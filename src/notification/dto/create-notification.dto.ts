@@ -6,10 +6,6 @@ export class CreateNotificationDto {
     @IsNumber()
     client_id: number;
 
-    @ApiProperty({example: 'Munisa', description: 'Client name'})
-    @IsString()
-    name: string
-
     @ApiProperty({example: '+998901234567', description: 'Client phone number'})
     @IsString()
     phone: string

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import {  Payment } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Request } from 'express';
 
 @Injectable()
 export class PaymentService {
@@ -30,7 +31,7 @@ export class PaymentService {
         }
 
         if (amount <= 0) {
-          break; // Exit early if no amount left
+          break; 
         }
 
         const paymentSchedule = await tx.payment_schedule.findUnique({
@@ -43,11 +44,11 @@ export class PaymentService {
         });
 
         if (!paymentSchedule) {
-          continue; // Skip if schedule not found
+          continue; 
         }
 
         if (paymentSchedule.status === 'PAID') {
-          continue; // Skip already paid
+          continue; 
         }
 
         const remainingToPay = paymentSchedule.expected_amount - paymentSchedule.paid_amount;
@@ -106,7 +107,6 @@ export class PaymentService {
         }
       }
 
-      // If credit remaining amount is now 0, mark credit as completed
       const updatedCredit = await tx.credits.findUnique({
         where: { id: createPaymentDto.credit_id },
       });
@@ -176,17 +176,51 @@ export class PaymentService {
   }
 
 
-  async findOne(id: number) {
+  async findOne(req: Request) {
     try {
-      const data = await this.prisma.payment.findMany()
-      if(!data){
-        throw new BadRequestException('Payment not found');
+      const seller_id = req['user-id'];
+
+      const payments = await this.prisma.payment_schedule.findMany({
+        where: {
+          credit: {
+            debtor: { seller_id }, 
+          },
+          status: 'PAID',
+        },
+        include: {
+          credit: {
+            include: {
+              debtor: true,
+            },
+          },
+        },
+      });
+
+      if (!payments.length) {
+        throw new BadRequestException('Payments not found');
       }
-      return data
+
+      return payments.map((p) => ({
+        id: p.id,
+        due_date: p.due_date,
+        expected_amount: p.expected_amount,
+        paid_amount: p.paid_amount,
+        status: p.status,
+        product_name: p.credit.product_name,
+        credit_id: p.credit.id,
+        debtor: {
+          id: p.credit.debtor.id,
+          name: p.credit.debtor.name,
+          address: p.credit.debtor.address,
+          note: p.credit.debtor.note
+        },
+      }));
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
+
+
 
   async update(id: number, updatePaymentDto: UpdatePaymentDto) {
     try {

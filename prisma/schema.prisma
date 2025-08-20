@@ -25,6 +25,9 @@ model Seller{
   password String
   name String
   balance Int
+  image String ?
+  number String ?
+  email String ?
 
   debters Debtor[]
 }

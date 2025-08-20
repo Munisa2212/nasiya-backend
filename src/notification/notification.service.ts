@@ -20,6 +20,15 @@ export class NotificationService {
     }
   }
 
+  async findAll(){
+    try {
+      const data = await this.prisma.notification.findMany()
+      return data
+    } catch (error) {
+      throw new BadRequestException("Notification not found")
+    }
+  }
+
   async findOneByDebtorId(id: number){
     try {
       const data = await this.prisma.notification.findMany({where: {client_id: id}});

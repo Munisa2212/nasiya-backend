@@ -28,6 +28,7 @@ export class SellerService {
         name: Add_seller.name,
         login: Add_seller.login,
         password: hash,
+        image: Add_seller.image,
         balance: 0
       }});
       return {message: 'Seller created successfully'}

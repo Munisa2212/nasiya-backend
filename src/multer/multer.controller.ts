@@ -39,7 +39,7 @@ export class MulterController {
     if (!file) {
       return {message: 'No file uploaded. Please upload a file.'}
     }
-    const fileUrl = `http://51.20.63.44/file/${file.filename}`;
+    const fileUrl = `http://localhost:3000/file/${file.filename}`;
     return {
       fileUrl
     };

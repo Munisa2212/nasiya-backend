@@ -13,6 +13,18 @@ export class Add_seller {
     @ApiProperty({example: 'Munisa22', description: 'Seller password'})
     @IsString()
     password: string
+
+    @ApiProperty({example: 'image.jpg', description: 'Seller image'})
+    @IsString()
+    image:string
+
+    @ApiProperty({example: "+998990009900", description: "Phone number"})
+    @IsString()
+    phone: string
+
+    @ApiProperty({example: "example@gmail.com", description: "Email"})
+    @IsString()
+    email: string
 }
 
 
